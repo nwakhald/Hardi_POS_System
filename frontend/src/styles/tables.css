@@ -1,0 +1,55 @@
+.table-container {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Header */
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-header h2 {
+  font-size: 20px;
+}
+
+/* Table */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Head */
+.custom-table thead {
+  background: #f3f4f6;
+}
+
+.custom-table th {
+  text-align: left;
+  padding: 12px;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Body */
+.custom-table td {
+  padding: 12px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+/* Hover effect */
+.custom-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* Actions spacing */
+.custom-table td:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
