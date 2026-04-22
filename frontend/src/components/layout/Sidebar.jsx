@@ -9,6 +9,7 @@ export default function Sidebar() {
     { name: "History", path: "/projects/history" },
     { name: "Team Members", path: "/team-members" },
     { name: "Profit", path: "/profit" },
+    
   ];
 
   return (

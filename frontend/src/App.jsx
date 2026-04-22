@@ -28,6 +28,7 @@ function App() {
           <Route path="profit" element={<Profit />} />
           <Route path="projects/add" element={<AddProjects />} />
 <Route path="projects/in-progress/:id" element={<ProjectDetails />} />   
+
      </Route>
       </Routes>
     </BrowserRouter>

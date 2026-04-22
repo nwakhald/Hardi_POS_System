@@ -16,9 +16,11 @@ export default function ProjectDetails() {
     startDate: "2026-06-04 12:00 PM",
     deadline: "2026-06-10",
     progress: "80%",
-    totalCost: "$500",
-    paid: "$300",
-    unpaid: "$200",
+    totalCost: 500,
+    paid: 300,
+    unpaid: 200,
+    expenseCost: 120,
+    teamCost: 80,
     notes: "Installation almost finished",
   };
 
@@ -32,7 +34,7 @@ export default function ProjectDetails() {
       startTime: "-",
       finishTime: "-",
       status: "Not Working",
-      actionState: "idle", // idle | working | confirm
+      actionState: "idle",
     },
     {
       id: 2,
@@ -191,9 +193,11 @@ export default function ProjectDetails() {
     { label: "Deadline", value: project.deadline },
     { label: "Progress", value: project.progress },
     { label: "Status", value: workStatus },
-    { label: "Total Cost", value: project.totalCost },
-    { label: "Paid", value: project.paid },
-    { label: "Unpaid", value: project.unpaid },
+    { label: "Total Cost", value: `$${project.totalCost}` },
+    { label: "Paid", value: `$${project.paid}` },
+    { label: "Unpaid", value: `$${project.unpaid}` },
+    { label: "Expense Cost", value: `$${project.expenseCost}` },
+    { label: "Team Cost", value: `$${project.teamCost}` },
     { label: "Notes", value: project.notes },
   ];
 
