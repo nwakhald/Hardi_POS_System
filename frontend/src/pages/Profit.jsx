@@ -9,46 +9,7 @@ export default function Profit() {
   const [appliedYear, setAppliedYear] = useState("");
 
   const allProjects = [
-    {
-      id: 1,
-      title: "House A",
-      owner: "Ahmed",
-      location: "Abuja",
-      finishDate: "2025-02-10",
-      totalCost: 500,
-      expenseCost: 120,
-      teamCost: 80,
-    },
-    {
-      id: 2,
-      title: "Shop B",
-      owner: "Ali",
-      location: "Baghdad",
-      finishDate: "2025-02-18",
-      totalCost: 700,
-      expenseCost: 180,
-      teamCost: 100,
-    },
-    {
-      id: 3,
-      title: "House C",
-      owner: "Hassan",
-      location: "Basra",
-      finishDate: "2025-03-05",
-      totalCost: 450,
-      expenseCost: 100,
-      teamCost: 70,
-    },
-    {
-      id: 4,
-      title: "Office D",
-      owner: "Nwa",
-      location: "Abuja",
-      finishDate: "2025-03-20",
-      totalCost: 900,
-      expenseCost: 250,
-      teamCost: 120,
-    },
+   
   ];
 
   const handleSearch = () => {

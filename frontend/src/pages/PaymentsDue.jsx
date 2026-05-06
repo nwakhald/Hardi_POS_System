@@ -10,54 +10,8 @@ export default function PaymentsDue() {
   const [appliedOwner, setAppliedOwner] = useState("");
 
   const allProjects = [
-    {
-      id: 1,
-      title: "House A",
-      owner: "Ahmed",
-      phone: "077xxxxxxx",
-      location: "Abuja",
-      totalCost: 500,
-      paid: 500,
-      unpaid: 0,
-      workStatus: "Completed",
-      note: "Closed project",
-    },
-    {
-      id: 2,
-      title: "Shop B",
-      owner: "Ali",
-      phone: "078xxxxxxx",
-      location: "Baghdad",
-      totalCost: 700,
-      paid: 500,
-      unpaid: 200,
-      workStatus: "Completed",
-      note: "Payment not fully completed",
-    },
-    {
-      id: 3,
-      title: "House C",
-      owner: "Hassan",
-      phone: "075xxxxxxx",
-      location: "Basra",
-      totalCost: 450,
-      paid: 0,
-      unpaid: 450,
-      workStatus: "Handed Off",
-      note: "Owner said stop work",
-    },
-    {
-      id: 4,
-      title: "Office D",
-      owner: "Nwa",
-      phone: "079xxxxxxx",
-      location: "Baghdad",
-      totalCost: 900,
-      paid: 300,
-      unpaid: 600,
-      workStatus: "In Progress",
-      note: "Still paying in parts",
-    },
+    
+     
   ];
 
   const handleSearch = () => {

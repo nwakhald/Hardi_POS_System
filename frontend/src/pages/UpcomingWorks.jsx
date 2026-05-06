@@ -4,26 +4,7 @@ import Table from "../components/projects/ProjectTable";
 export default function UpcomingWorks() {
   const navigate = useNavigate();
   const projects = [
-    {
-      id: 1,
-      title: "House A",
-      owner: "Nwa",
-      location: "Abuja",
-      phone: "077xxxxxxx",
-      start: "2026-06-01",
-      cost: 500,
-      notes: "This is a note about House A.",
-    },
-    {
-      id: 2,
-      title: "House B",
-      owner: "john",
-      location: "sarchnar",
-      phone: "078xxxxxxx",
-      start: "2026-07-01",
-      cost: 700,
-      notes: "This is a note about House B. hjhuhgu hjk jhh ih ud rese ws",
-    },
+   
   ];
 const columns = [
     { key: "id", label: "ID" },

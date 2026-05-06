@@ -7,34 +7,7 @@ export default function WorkingProgress() {
   const navigate = useNavigate();
 
   const [workingProjects, setWorkingProjects] = useState([
-    {
-      id: 1,
-      title: "House C",
-      owner: "Nwa",
-      phone: "077xxxxxxx",
-      startDate: "2026-06-04 12:00 PM",
-      deadline: "2026-06-10",
-      progress: "80%",
-      status: "In Progress",
-      currentWorkers: "Ali",
-      paid: "$300",
-      unpaid: "$200",
-      lastActionTime: "2026-06-04 12:00 PM",
-    },
-    {
-      id: 2,
-      title: "House D",
-      owner: "Ahmed",
-      phone: "078xxxxxxx",
-      startDate: "2026-06-05 09:30 AM",
-      deadline: "2026-06-12",
-      progress: "45%",
-      status: "Paused",
-      currentWorkers: "-",
-      paid: "$150",
-      unpaid: "$350",
-      lastActionTime: "2026-06-05 01:15 PM",
-    },
+  
   ]);
 
   const getNow = () => new Date().toLocaleString();

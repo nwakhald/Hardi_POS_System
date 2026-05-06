@@ -24,54 +24,7 @@ export default function History() {
 
   const filteredProjects = useMemo(() => {
     const allProjects = [
-      {
-        id: 1,
-        title: "House A",
-        owner: "Ahmed",
-        phone: "077xxxxxxx",
-        location: "Abuja",
-        progress: "100%",
-        workStatus: "Completed",
-        totalCost: 500,
-        paid: 500,
-        unpaid: 0,
-        finishDate: "2025-04-02",
-        teamMembers: ["Nwa", "Ali"],
-        workDates: ["2025-04-02"],
-        note: "Finished successfully",
-      },
-      {
-        id: 2,
-        title: "Shop B",
-        owner: "Ali",
-        phone: "078xxxxxxx",
-        location: "Baghdad",
-        progress: "100%",
-        workStatus: "Completed",
-        totalCost: 700,
-        paid: 500,
-        unpaid: 200,
-        finishDate: "2025-04-03",
-        teamMembers: ["Omar", "Nwa"],
-        workDates: ["2025-04-02", "2025-04-03"],
-        note: "Payment not fully completed",
-      },
-      {
-        id: 3,
-        title: "House C",
-        owner: "Hassan",
-        phone: "075xxxxxxx",
-        location: "Basra",
-        progress: "70%",
-        workStatus: "Handed Off",
-        totalCost: 450,
-        paid: 150,
-        unpaid: 300,
-        finishDate: "2025-04-04",
-        teamMembers: ["Ali"],
-        workDates: ["2025-04-04"],
-        note: "Owner said stop work",
-      },
+      
     ];
 
     return allProjects

@@ -4,33 +4,7 @@ import Button from "../components/ui/Button";
 
 export default function TeamMembers() {
   const [teamMembers, setTeamMembers] = useState([
-    {
-      id: 1,
-      name: "Nwa",
-      role: "Installer",
-      phone: "077xxxxxxx",
-      status: "Available",
-      currentWork: "-",
-      note: "Can work full day",
-    },
-    {
-      id: 2,
-      name: "Ali",
-      role: "Technician",
-      phone: "078xxxxxxx",
-      status: "Working",
-      currentWork: "House C",
-      note: "Working on cameras",
-    },
-    {
-      id: 3,
-      name: "Omar",
-      role: "Helper",
-      phone: "075xxxxxxx",
-      status: "Available",
-      currentWork: "-",
-      note: "Ready for new task",
-    },
+
   ]);
 
   const [showForm, setShowForm] = useState(false);
