@@ -11,7 +11,7 @@ import TeamMembers from "./pages/TeamMembers";
 import Profit from "./pages/Profit";
 import AddProjects from "./pages/projects/AddProjects";
 import ProjectDetails from "./pages/projects/ProjectDetails";
-
+import EditProject from "./pages/projects/EditProject";
 function App() {
   return (
 <BrowserRouter>
@@ -46,6 +46,7 @@ function App() {
       <Route path="profit" element={<Profit />} />
       <Route path="projects/add" element={<AddProjects />} />
       <Route path="projects/in-progress/:id" element={<ProjectDetails />} />   
+      <Route path="projects/edit/:id" element={<EditProject />} />
     </Route>
 
 
