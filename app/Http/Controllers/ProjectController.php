@@ -80,8 +80,44 @@ class ProjectController extends Controller
             'message' => 'Project deleted successfully',
         ]);
     }
+public function start(Project $project)
+{
+    $project->update([
+        'status' => 'paused',
+        'progress' => 0,
+        
+    ]);
 
+    return response()->json([
+        'message' => 'Project started successfully',
+        'project' => $project
+    ]);
+}
+public function pause(Project $project)
+{
+    $project->update([
+        'status' => 'paused',
+        'last_action_time' => now(),
+    ]);
 
+    return response()->json([
+        'message' => 'Project paused',
+        'project' => $project,
+    ]);
+}
+
+public function resume(Project $project)
+{
+    $project->update([
+        'status' => 'in_progress',
+        'last_action_time' => now(),
+    ]);
+
+    return response()->json([
+        'message' => 'Project resumed',
+        'project' => $project,
+    ]);
+}
 
 
 }
