@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Payment;
 
 class Project extends Model
 {
@@ -21,15 +22,19 @@ class Project extends Model
     'progress',
     'status',
     'notes',
-    'payment_logs',
     'activity_logs',
     'finished_sessions',
     'last_action_time',
     'finish_date',
 ];
 protected $casts = [
-    'payment_logs' => 'array',
     'activity_logs' => 'array',
     'finished_sessions' => 'array',
 ];
+
+public function payments()
+{
+    return $this->hasMany(Payment::class);
 }
+}
+

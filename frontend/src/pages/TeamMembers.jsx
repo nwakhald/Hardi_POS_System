@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getTeamMembers, createTeamMember } from "../api/teamApi";
 import Table from "../components/projects/ProjectTable";
 import Button from "../components/ui/Button";
 
@@ -6,7 +7,14 @@ export default function TeamMembers() {
   const [teamMembers, setTeamMembers] = useState([
 
   ]);
+useEffect(() => {
+  const loadMembers = async () => {
+    const data = await getTeamMembers();
+    setTeamMembers(data);
+  };
 
+  loadMembers();
+}, []);
   const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -36,26 +44,23 @@ export default function TeamMembers() {
     }));
   };
 
-  const handleAddMember = (e) => {
+  const handleAddMember = async (e) => {
     e.preventDefault();
 
-    const newMember = {
-      id: teamMembers.length + 1,
+    const response = await createTeamMember({
       name: formData.name,
-      role: formData.role,
       phone: formData.phone,
-   
-    
+      role: formData.role,
       note: formData.note,
-    };
+    });
 
-    setTeamMembers((prev) => [...prev, newMember]);
+    setTeamMembers((prev) => [response.member, ...prev]);
 
     setFormData({
       name: "",
-      role: "",
       phone: "",
-     
+      role: "",
+      status: "Available",
       currentWork: "-",
       note: "",
     });
@@ -142,7 +147,7 @@ export default function TeamMembers() {
         data={teamMembers}
         renderActions={() => (
           <>
-            <Button variant="secondary">Open</Button>
+    
             <Button variant="warning">Edit</Button>
             <Button variant="danger">Delete</Button>
           </>

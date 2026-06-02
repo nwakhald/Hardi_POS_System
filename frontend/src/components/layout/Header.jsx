@@ -1,23 +1,17 @@
-import React from 'react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../ui/Button";
+import useAuth from "../../hooks/useAuth";
 import "../../styles/header.css";
 
-async function handleLogout() {
-  const token = localStorage.getItem("token");
-
-  await fetch("http://127.0.0.1:8000/api/logout", {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + token,
-      Accept: "application/json",
-    },
-  });
-
-  localStorage.removeItem("token");
-
-  window.location.href = "/login";
-}
 export default function Header() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
   return (
     <header className="header">
       <div className="header-titles">

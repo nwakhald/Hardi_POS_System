@@ -12,48 +12,55 @@ import Profit from "./pages/Profit";
 import AddProjects from "./pages/projects/AddProjects";
 import ProjectDetails from "./pages/projects/ProjectDetails";
 import EditProject from "./pages/projects/EditProject";
+import { AuthProvider } from "./contexts/AuthProvider.jsx";
+import useAuth from "./hooks/useAuth";
+
+function AppRoutes() {
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
+          }
+        />
+
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="/dashboard" replace />} />
+
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="projects/upcoming" element={<UpcomingWorks />} />
+          <Route path="projects/in-progress" element={<WorkingProgress />} />
+          <Route path="projects/payments-due" element={<PaymentsDue />} />
+          <Route path="projects/history" element={<History />} />
+          <Route path="team-members" element={<TeamMembers />} />
+          <Route path="profit" element={<Profit />} />
+          <Route path="projects/add" element={<AddProjects />} />
+          <Route path="projects/in-progress/:id" element={<ProjectDetails />} />
+          <Route path="projects/edit/:id" element={<EditProject />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
 function App() {
   return (
-<BrowserRouter>
-  <Routes>
-
-  
-    <Route
-      path="/login"
-      element={
-        localStorage.getItem("token")
-          ? <Navigate to="/dashboard" replace />
-          : <Login />
-      }
-    />
-
-    <Route
-      path="/"
-      element={
-        <ProtectedRoute>
-          <Layout />
-        </ProtectedRoute>
-      }
-    >
-      <Route index element={<Navigate to="/dashboard" replace />} />
-      
-      <Route path="dashboard" element={<Dashboard />} />
-      <Route path="projects/upcoming" element={<UpcomingWorks />} />
-      <Route path="projects/in-progress" element={<WorkingProgress />} />
-      <Route path="projects/payments-due" element={<PaymentsDue />} />
-      <Route path="projects/history" element={<History />} />
-      <Route path="team-members" element={<TeamMembers />} />
-      <Route path="profit" element={<Profit />} />
-      <Route path="projects/add" element={<AddProjects />} />
-      <Route path="projects/in-progress/:id" element={<ProjectDetails />} />   
-      <Route path="projects/edit/:id" element={<EditProject />} />
-    </Route>
-
-
-    <Route path="*" element={<Navigate to="/login" replace />} />
-
-  </Routes>
-</BrowserRouter>
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }
 

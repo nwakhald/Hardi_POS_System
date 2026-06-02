@@ -1,30 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Table from "../components/projects/ProjectTable";
 import Button from "../components/ui/Button";
+import { getProjects } from "../api/projectApi";
 
 export default function PaymentsDue() {
   const navigate = useNavigate();
 
+  const [projects, setProjects] = useState([]);
   const [searchOwner, setSearchOwner] = useState("");
   const [appliedOwner, setAppliedOwner] = useState("");
+  const [searchDate, setSearchDate] = useState("");
+  const [appliedDate, setAppliedDate] = useState("");
+  const [searchLocation, setSearchLocation] = useState("");
+  const [appliedLocation, setAppliedLocation] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const allProjects = [
-    
-     
-  ];
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        setLoading(true);
+        const data = await getProjects();
+        setProjects(data);
+      } catch (err) {
+        console.error("Failed to load projects", err);
+        setError("Failed to load payment due projects");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, []);
 
   const handleSearch = () => {
     setAppliedOwner(searchOwner);
+    setAppliedDate(searchDate);
+    setAppliedLocation(searchLocation);
   };
 
   const handleReset = () => {
     setSearchOwner("");
     setAppliedOwner("");
+    setSearchDate("");
+    setAppliedDate("");
+    setSearchLocation("");
+    setAppliedLocation("");
   };
 
-  const filteredProjects = allProjects
-    .filter((project) => project.unpaid > 0)
+  const filteredProjects = projects
+    .filter((project) => Number(project.unpaid) > 0)
     .filter((project) => {
       if (
         appliedOwner &&
@@ -33,20 +59,35 @@ export default function PaymentsDue() {
         return false;
       }
 
+      if (
+        appliedDate &&
+        project.start_date !== appliedDate
+      ) {
+        return false;
+      }
+
+      if (
+        appliedLocation &&
+        !project.location.toLowerCase().includes(appliedLocation.toLowerCase())
+      ) {
+        return false;
+      }
+
       return true;
     })
     .map((project) => ({
       ...project,
-      totalCostText: `$${project.totalCost}`,
-      paidText: `$${project.paid}`,
-      unpaidText: `$${project.unpaid}`,
+      workStatus: project.status ? project.status.replace(/_/g, " ") : "-",
+      totalCostText: `$${Number(project.cost).toFixed(2)}`,
+      paidText: `$${Number(project.paid).toFixed(2)}`,
+      unpaidText: `$${Number(project.unpaid).toFixed(2)}`,
     }));
 
   const summary = filteredProjects.reduce(
     (acc, project) => {
-      acc.totalCost += project.totalCost;
-      acc.paid += project.paid;
-      acc.unpaid += project.unpaid;
+      acc.totalCost += Number(project.cost || 0);
+      acc.paid += Number(project.paid || 0);
+      acc.unpaid += Number(project.unpaid || 0);
       return acc;
     },
     {
@@ -62,6 +103,7 @@ export default function PaymentsDue() {
     { key: "owner", label: "Owner" },
     { key: "phone", label: "Phone" },
     { key: "location", label: "Location" },
+    { key: "start_date", label: "Date" },
     { key: "workStatus", label: "Work Status" },
     { key: "totalCostText", label: "Total Cost" },
     { key: "paidText", label: "Paid" },
@@ -84,6 +126,22 @@ export default function PaymentsDue() {
           className="input-modern"
         />
 
+        <input
+          type="date"
+          value={searchDate}
+          onChange={(e) => setSearchDate(e.target.value)}
+          className="input-modern"
+          style={{ maxWidth: "180px" }}
+        />
+
+        <input
+          type="text"
+          placeholder="Search by location"
+          value={searchLocation}
+          onChange={(e) => setSearchLocation(e.target.value)}
+          className="input-modern"
+        />
+
         <Button variant="primary" onClick={handleSearch}>
           Search
         </Button>
@@ -103,32 +161,37 @@ export default function PaymentsDue() {
       >
         <div className="table-container">
           <h4>Total Cost</h4>
-          <p>${summary.totalCost}</p>
+          <p>${summary.totalCost.toFixed(2)}</p>
         </div>
 
         <div className="table-container">
           <h4>Total Paid</h4>
-          <p>${summary.paid}</p>
+          <p>${summary.paid.toFixed(2)}</p>
         </div>
 
         <div className="table-container">
           <h4>Total Unpaid</h4>
-          <p>${summary.unpaid}</p>
+          <p>${summary.unpaid.toFixed(2)}</p>
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        data={filteredProjects}
-        renderActions={(project) => (
-          <Button
-            variant="secondary"
-            onClick={() => navigate(`/projects/in-progress/${project.id}`)}
-          >
-            Open
-          </Button>
-        )}
-      />
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {loading ? (
+        <p>Loading payment due projects...</p>
+      ) : (
+        <Table
+          columns={columns}
+          data={filteredProjects}
+          renderActions={(project) => (
+            <Button
+              variant="secondary"
+              onClick={() => navigate(`/projects/in-progress/${project.id}`)}
+            >
+              Open
+            </Button>
+          )}
+        />
+      )}
     </div>
   );
 }

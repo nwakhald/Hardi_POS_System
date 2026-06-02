@@ -10,12 +10,12 @@ class OwnerSeeder extends Seeder
 {
     public function run(): void
     {
-        if (User::count() === 0) {
-            User::create([
+        User::firstOrCreate(
+            ['email' => env('OWNER_EMAIL')],
+            [
                 'name' => 'Owner',
-                'email' => env('OWNER_EMAIL'),
                 'password' => Hash::make(env('OWNER_PASSWORD')),
-            ]);
-        }
+            ]
+        );
     }
 }

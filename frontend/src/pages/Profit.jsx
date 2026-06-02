@@ -1,16 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Table from "../components/projects/ProjectTable";
 import Button from "../components/ui/Button";
+import { getProjects } from "../api/projectApi";
 
 export default function Profit() {
+  const [projects, setProjects] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [appliedMonth, setAppliedMonth] = useState("");
   const [appliedYear, setAppliedYear] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const allProjects = [
-   
-  ];
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        setLoading(true);
+        const data = await getProjects();
+        setProjects(data);
+      } catch (err) {
+        console.error("Failed to load projects", err);
+        setError("Failed to load profit projects");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, []);
 
   const handleSearch = () => {
     setAppliedMonth(selectedMonth);
@@ -24,11 +41,12 @@ export default function Profit() {
     setAppliedYear("");
   };
 
-  const filteredProjects = allProjects
+  const filteredProjects = projects
     .filter((project) => {
-      if (!project.finishDate) return false;
+      const finishDate = project.finish_date || project.finishDate;
+      if (!finishDate) return false;
 
-      const date = new Date(project.finishDate);
+      const date = new Date(finishDate);
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const year = String(date.getFullYear());
 
@@ -38,22 +56,33 @@ export default function Profit() {
       return true;
     })
     .map((project) => {
-      const profit =
-        project.totalCost - project.expenseCost - project.teamCost;
+      const totalCost = Number(project.cost || 0);
+      const revenue = Number(project.paid || 0);
+      const expenseCost = Number(project.expense_cost || 0);
+      const teamCost = Number(project.team_cost || 0);
+      const profit = revenue - expenseCost - teamCost;
+      const finishDate = project.finish_date || project.finishDate || "";
 
       return {
         ...project,
-        totalCostText: `$${project.totalCost}`,
-        expenseCostText: `$${project.expenseCost}`,
-        teamCostText: `$${project.teamCost}`,
+        finishDate,
+        totalCost,
+        revenue,
+        expenseCost,
+        teamCost,
+        totalCostText: `$${totalCost.toFixed(2)}`,
+        revenueText: `$${revenue.toFixed(2)}`,
+        expenseCostText: `$${expenseCost.toFixed(2)}`,
+        teamCostText: `$${teamCost.toFixed(2)}`,
         profit,
-        profitText: `$${profit}`,
+        profitText: `$${profit.toFixed(2)}`,
       };
     });
 
   const summary = filteredProjects.reduce(
     (acc, project) => {
       acc.totalCost += project.totalCost;
+      acc.revenue += project.revenue;
       acc.expenseCost += project.expenseCost;
       acc.teamCost += project.teamCost;
       acc.profit += project.profit;
@@ -61,6 +90,7 @@ export default function Profit() {
     },
     {
       totalCost: 0,
+      revenue: 0,
       expenseCost: 0,
       teamCost: 0,
       profit: 0,
@@ -74,6 +104,7 @@ export default function Profit() {
     { key: "location", label: "Location" },
     { key: "finishDate", label: "Finish Date" },
     { key: "totalCostText", label: "Total Cost" },
+    { key: "revenueText", label: "Paid" },
     { key: "expenseCostText", label: "Expense Cost" },
     { key: "teamCostText", label: "Team Cost" },
     { key: "profitText", label: "Profit" },
@@ -136,27 +167,38 @@ export default function Profit() {
       >
         <div className="table-container">
           <h4>Total Cost</h4>
-          <p>${summary.totalCost}</p>
+          <p>${summary.totalCost.toFixed(2)}</p>
+        </div>
+
+        <div className="table-container">
+          <h4>Total Paid</h4>
+          <p>${summary.revenue.toFixed(2)}</p>
         </div>
 
         <div className="table-container">
           <h4>Expense Cost</h4>
-          <p>${summary.expenseCost}</p>
+          <p>${summary.expenseCost.toFixed(2)}</p>
         </div>
 
         <div className="table-container">
           <h4>Team Cost</h4>
-          <p>${summary.teamCost}</p>
+          <p>${summary.teamCost.toFixed(2)}</p>
         </div>
 
         <div className="table-container">
           <h4>Total Profit</h4>
-<p className={summary.profit >= 0 ? "profit-positive" : "profit-negative"}>
-  ${summary.profit}
-</p>        </div>
+          <p className={summary.profit >= 0 ? "profit-positive" : "profit-negative"}>
+            ${summary.profit.toFixed(2)}
+          </p>
+        </div>
       </div>
 
-      <Table columns={columns} data={filteredProjects} />
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {loading ? (
+        <p>Loading profit data...</p>
+      ) : (
+        <Table columns={columns} data={filteredProjects} />
+      )}
     </div>
   );
 }
