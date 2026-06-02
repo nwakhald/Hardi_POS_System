@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTeamMembers, createTeamMember } from "../api/teamApi";
+import { getTeamMembers, createTeamMember, updateTeamMember, deleteTeamMember, getTeamMemberSessions } from "../api/teamApi";
 import Table from "../components/projects/ProjectTable";
 import Button from "../components/ui/Button";
 
@@ -16,6 +16,11 @@ useEffect(() => {
   loadMembers();
 }, []);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+
+  const [showSessions, setShowSessions] = useState(false);
+  const [sessions, setSessions] = useState([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -47,14 +52,26 @@ useEffect(() => {
   const handleAddMember = async (e) => {
     e.preventDefault();
 
-    const response = await createTeamMember({
-      name: formData.name,
-      phone: formData.phone,
-      role: formData.role,
-      note: formData.note,
-    });
+    if (editingId) {
+      const response = await updateTeamMember(editingId, {
+        name: formData.name,
+        phone: formData.phone,
+        role: formData.role,
+        note: formData.note,
+      });
 
-    setTeamMembers((prev) => [response.member, ...prev]);
+      setTeamMembers((prev) => prev.map((m) => (m.id === editingId ? response.member : m)));
+      setEditingId(null);
+    } else {
+      const response = await createTeamMember({
+        name: formData.name,
+        phone: formData.phone,
+        role: formData.role,
+        note: formData.note,
+      });
+
+      setTeamMembers((prev) => [response.member, ...prev]);
+    }
 
     setFormData({
       name: "",
@@ -66,6 +83,39 @@ useEffect(() => {
     });
 
     setShowForm(false);
+  };
+
+  const handleEdit = (member) => {
+    setEditingId(member.id);
+    setFormData({
+      name: member.name || "",
+      phone: member.phone || "",
+      role: member.role || "",
+      status: member.status || "Available",
+      currentWork: member.currentWork || "-",
+      note: member.note || "",
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (memberId) => {
+    if (!window.confirm("Are you sure you want to delete this team member?")) return;
+    await deleteTeamMember(memberId);
+    setTeamMembers((prev) => prev.filter((m) => m.id !== memberId));
+  };
+
+  const openSessions = async (member) => {
+    setShowSessions(true);
+    setSessionsLoading(true);
+    try {
+      const data = await getTeamMemberSessions(member.id);
+      setSessions(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to load sessions", err);
+      setSessions([]);
+    } finally {
+      setSessionsLoading(false);
+    }
   };
 
   return (
@@ -145,14 +195,60 @@ useEffect(() => {
       <Table
         columns={columns}
         data={teamMembers}
-        renderActions={() => (
+        renderActions={(member) => (
           <>
-    
-            <Button variant="warning">Edit</Button>
-            <Button variant="danger">Delete</Button>
+            <Button variant="primary" onClick={() => openSessions(member)}>History</Button>
+            <Button variant="warning" onClick={() => handleEdit(member)}>Edit</Button>
+            <Button variant="danger" onClick={() => handleDelete(member.id)}>Delete</Button>
           </>
         )}
       />
+
+      {showSessions && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000,
+        }}>
+          <div style={{
+            backgroundColor: "white",
+            padding: "20px",
+            borderRadius: "8px",
+            width: "90%",
+            maxWidth: "800px",
+            maxHeight: "90%",
+            overflow: "auto",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <h3>Work History</h3>
+              <div>
+                <Button variant="secondary" onClick={() => setShowSessions(false)}>Close</Button>
+              </div>
+            </div>
+
+            {sessionsLoading ? (
+              <p>Loading...</p>
+            ) : (
+              <Table
+                columns={[
+                  { key: 'id', label: 'ID' },
+                  { key: 'project_title', label: 'Project' },
+                  { key: 'startTime', label: 'Start Time' },
+                  { key: 'finishTime', label: 'Finish Time' },
+                ]}
+                data={sessions}
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
