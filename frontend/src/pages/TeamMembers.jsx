@@ -17,6 +17,7 @@ useEffect(() => {
 }, []);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [selectedMember, setSelectedMember] = useState(null);
 
   const [showSessions, setShowSessions] = useState(false);
   const [sessions, setSessions] = useState([]);
@@ -49,6 +50,18 @@ useEffect(() => {
     }));
   };
 
+  const resetForm = () => {
+    setEditingId(null);
+    setFormData({
+      name: "",
+      phone: "",
+      role: "",
+      status: "Available",
+      currentWork: "-",
+      note: "",
+    });
+  };
+
   const handleAddMember = async (e) => {
     e.preventDefault();
 
@@ -73,15 +86,7 @@ useEffect(() => {
       setTeamMembers((prev) => [response.member, ...prev]);
     }
 
-    setFormData({
-      name: "",
-      phone: "",
-      role: "",
-      status: "Available",
-      currentWork: "-",
-      note: "",
-    });
-
+    resetForm();
     setShowForm(false);
   };
 
@@ -98,6 +103,11 @@ useEffect(() => {
     setShowForm(true);
   };
 
+  const handleCancelEdit = () => {
+    resetForm();
+    setShowForm(false);
+  };
+
   const handleDelete = async (memberId) => {
     if (!window.confirm("Are you sure you want to delete this team member?")) return;
     await deleteTeamMember(memberId);
@@ -105,6 +115,7 @@ useEffect(() => {
   };
 
   const openSessions = async (member) => {
+    setSelectedMember(member);
     setShowSessions(true);
     setSessionsLoading(true);
     try {
@@ -123,7 +134,10 @@ useEffect(() => {
       <div className="table-header">
         <h2>Team Members</h2>
 
-        <Button variant="primary" onClick={() => setShowForm(!showForm)}>
+        <Button variant="primary" onClick={() => {
+          if (!showForm) resetForm();
+          setShowForm(!showForm);
+        }}>
           {showForm ? "Close Form" : "+ Add Team Member"}
         </Button>
       </div>
@@ -132,9 +146,9 @@ useEffect(() => {
         <div className="form-container" style={{ marginBottom: "20px" }}>
           <form className="form" onSubmit={handleAddMember}>
             <div className="form-group">
-              <label>Name</label>
+              <label>{editingId ? "Edit Team Member" : "Name"}</label>
               <input
-              className="form-input"
+                className="form-input"
                 type="text"
                 name="name"
                 value={formData.name}
@@ -146,7 +160,7 @@ useEffect(() => {
             <div className="form-group">
               <label>Role</label>
               <input
-              className="form-input"
+                className="form-input"
                 type="text"
                 name="role"
                 value={formData.role}
@@ -158,7 +172,7 @@ useEffect(() => {
             <div className="form-group">
               <label>Phone</label>
               <input
-              className="form-input"
+                className="form-input"
                 type="text"
                 name="phone"
                 value={formData.phone}
@@ -166,10 +180,6 @@ useEffect(() => {
                 placeholder="Enter phone"
               />
             </div>
-
-            
-
-            
 
             <div className="form-group">
               <label>Note</label>
@@ -185,7 +195,10 @@ useEffect(() => {
 
             <div className="form-actions">
               <Button variant="success" type="submit">
-                Save Member
+                {editingId ? "Update Member" : "Save Member"}
+              </Button>
+              <Button variant="secondary" type="button" onClick={handleCancelEdit}>
+                Cancel
               </Button>
             </div>
           </form>
@@ -227,14 +240,19 @@ useEffect(() => {
             overflow: "auto",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-              <h3>Work History</h3>
+              <h3>Work History: {selectedMember?.name || "Team Member"}</h3>
               <div>
-                <Button variant="secondary" onClick={() => setShowSessions(false)}>Close</Button>
+                <Button variant="secondary" onClick={() => {
+                  setShowSessions(false);
+                  setSelectedMember(null);
+                }}>Close</Button>
               </div>
             </div>
 
             {sessionsLoading ? (
               <p>Loading...</p>
+            ) : sessions.length === 0 ? (
+              <p>No work history found for this team member.</p>
             ) : (
               <Table
                 columns={[
