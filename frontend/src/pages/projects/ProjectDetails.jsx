@@ -228,9 +228,10 @@ useEffect(() => {
           )
         );
 
+        const names = activeWorkers.map((w) => w.name).join(", ");
         addLog(
           "Auto-Finish Work",
-          `${activeWorkers.length} team member(s) work session(s) auto-finished due to project pause`
+          `${activeWorkers.length} team member(s) work session(s) auto-finished due to project pause: ${names}`
         );
       } else {
         addLog("Pause Work", "Work paused");
