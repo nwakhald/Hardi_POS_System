@@ -30,6 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/projects/{project}/complete', [ProjectController::class, 'complete']);
 Route::get('/team-members', [TeamMemberController::class, 'index']);
 Route::post('/team-members', [TeamMemberController::class, 'store']);
+    Route::put('/team-members/{teamMember}', [TeamMemberController::class, 'update']);
+    Route::delete('/team-members/{teamMember}', [TeamMemberController::class, 'destroy']);
+    Route::get('/team-members/{teamMember}/sessions', [TeamMemberController::class, 'sessions']);
 
 Route::get('/projects/{project}/team-work', [WorkSessionController::class, 'index']);
 Route::get('/projects/{project}/finished-sessions', [WorkSessionController::class, 'finishedSessions']);
