@@ -12,6 +12,8 @@ export default function ProjectDetails() {
  const [error, setError] = useState("");
  const [workStatus, setWorkStatus] = useState("In Progress");
 
+  const isCompleted = workStatus === "completed";
+
  useEffect(() => {
   const loadProject = async () => {
     try {
@@ -131,6 +133,10 @@ useEffect(() => {
   };
 
   const handleAddPayment = async (paymentData) => {
+    if (isCompleted) {
+      alert("Project is completed. Payments cannot be added.");
+      return;
+    }
     try {
       const response = await api.post(`/projects/${id}/payments`, {
         ...paymentData,
@@ -150,6 +156,10 @@ useEffect(() => {
   };
 
   const handleSubmitPayment = async () => {
+    if (isCompleted) {
+      alert("Project is completed. Payments cannot be added.");
+      return;
+    }
     if (!newPayment.amount || !newPayment.method) {
       alert("Please fill in amount and method");
       return;
@@ -161,6 +171,7 @@ useEffect(() => {
   };
 
   const handleToggleWorkStatus = async () => {
+    if (isCompleted) return;
     const token = localStorage.getItem("token");
 
     const endpoint = workStatus === "paused" ? "resume" : "pause";
@@ -283,6 +294,10 @@ useEffect(() => {
   };
 
   const handleStartWorking = async (workerId) => {
+    if (isCompleted) {
+      alert("Project is completed. No further work can be started.");
+      return;
+    }
     try {
       const response = await api.post(
         `/projects/${id}/team-members/${workerId}/start-work`
@@ -336,6 +351,10 @@ useEffect(() => {
   };
 
  const handleFinishWorking = async (workerId) => {
+  if (isCompleted) {
+    alert("Project is completed. No active work sessions can be finished here.");
+    return;
+  }
   const worker = teamWorkRows.find((w) => w.id === workerId);
 
   if (!worker?.workSessionId) {
@@ -465,6 +484,7 @@ if (!project) return <p>Project not found.</p>;
   ];
 
     const renderTeamAction = (worker) => {
+  if (isCompleted) return null;
   if (worker.actionState === "working") {
     return (
       <Button variant="primary" onClick={() => handleAskFinish(worker.id)}>
@@ -508,14 +528,21 @@ if (!project) return <p>Project not found.</p>;
         <h2>Project Details</h2>
 
         <div>
-         <Button
-  variant={workStatus === "paused" ? "success" : "primary"}
-  onClick={handleToggleWorkStatus}
->
-  {workStatus === "paused" ? "Resume" : "Pause"}
-</Button>
+          {!isCompleted && (
+            <>
+              <Button
+                variant={workStatus === "paused" ? "success" : "primary"}
+                onClick={handleToggleWorkStatus}
+              >
+                {workStatus === "paused" ? "Resume" : "Pause"}
+              </Button>
 
-          <Button variant="warning" onClick={() => setShowPaymentForm(true)}>Add Payment</Button>
+              <Button variant="warning" onClick={() => setShowPaymentForm(true)}>
+                Add Payment
+              </Button>
+            </>
+          )}
+
           <Button
             variant="success"
             onClick={handleCompleteProject}
@@ -568,7 +595,7 @@ if (!project) return <p>Project not found.</p>;
 
       <Table columns={activityColumns} data={activityLogs} />
 
-      {showPaymentForm && (
+      {!isCompleted && showPaymentForm && (
         <div style={{
           position: "fixed",
           top: 0,
